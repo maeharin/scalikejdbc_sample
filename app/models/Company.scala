@@ -34,7 +34,7 @@ object Company extends SQLSyntaxSupport[Company] {
 
   def findAll()(implicit session: DBSession = autoSession): List[Company] = withSQL {
     select.from(Company as c)
-      .where.append(isNotDeleted)
+      .where.withRoundBracket { _.eq(c.name, "Microsoft").or.eq(c.name, "Google") }
       .orderBy(c.id)
   }.map(Company(c)).list.apply()
 
