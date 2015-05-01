@@ -34,6 +34,10 @@ http://localhost:9000/#/companiesにアクセスして書き換え前の状態�
 
 書き換える
 
+query dslは以下を確認
+
+http://scalikejdbc.org/documentation/query-dsl.html
+
 ```scala:app/models/Company.scala
   def findAll()(implicit session: DBSession = autoSession): List[Company] = withSQL {
     select.from(Company as c)
