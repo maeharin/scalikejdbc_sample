@@ -1,46 +1,48 @@
-# Hello ScalikeJDBC!
+# ScalikeJDBCを試してみる
 
-This is a [Typesafe Activator](http://typesafe.com/platform/getstarted) template for ScalikeJDBC beginners.
+## ここまでの道のり
 
-http://typesafe.com/activator/template/scalikejdbc-activator-template
+### 雛形生成
 
-![screenshot](https://raw.github.com/scalikejdbc/hello-scalikejdbc/master/screenshot.png)
+activatorのテンプレート（scalikejdbc, play, backbone.jsなどを使っている）があるので、それを使う
 
-## ScalikeJDBC
+https://github.com/scalikejdbc/hello-scalikejdbc
 
-https://github.com/scalikejdbc/scalikejdbc
+```
+$ activator new
+> scalikejdbc-activator-template
+> scalikejdbc-sample // 今回のアプリ名
+```
 
-A tidy SQL-based DB access library for Scala developers. This library naturally wraps JDBC APIs and provides you easy-to-use APIs.
+```
+$ cd scalikejdbc-sample/
+$ ./activator
+[scalikejdbc-sample] $ run
+```
 
-## Play Framework 2.x
+http://localhost:9000/
 
-http://www.playframework.com/
+...時間かかる
 
-Play Framework makes it easy to build web applications with Java & Scala. Play is based on a lightweight, stateless, web-friendly architecture.
+エラーが出るので、画面の「apply this script now」をクリック（マイグレーションかかる）
 
-Built on Akka, Play provides predictable and minimal resource consumption (CPU, memory, threads) for highly-scalable applications.
+ok
 
-### play-flyway
+### 書き換えてみる
 
-https://github.com/tototoshi/play-flyway
+http://localhost:9000/#/companiesにアクセスして書き換え前の状態確認
 
-Flyway plugin for Play2. It aims to be a substitute for play-evolutions.
+書き換える
 
-### play-json4s
+```scala:app/models/Company.scala
+  def findAll()(implicit session: DBSession = autoSession): List[Company] = withSQL {
+    select.from(Company as c)
+      .where.withRoundBracket { _.eq(c.name, "Microsoft").or.eq(c.name, "Google") }
+      .orderBy(c.id)
+  }.map(Company(c)).list.apply()
+```
 
-https://github.com/tototoshi/play-json4s
+http://localhost:9000/#/companiesにアクセスして変更されていることを確認
 
-This module allows you to use json4s in your Play2 apps.
 
-## Backbone.js
-
-http://backbonejs.org/
-
-Backbone.js gives structure to web applications by providing models with key-value binding and custom events, collections with a rich API of enumerable functions, views with declarative event handling, and connects it all to your existing API over a RESTful JSON interface.
-
-## CoffeeScript
-
-http://coffeescript.org/
-
-CoffeeScript is a little language that compiles into JavaScript. Underneath that awkward Java-esque patina, JavaScript has always had a gorgeous heart. CoffeeScript is an attempt to expose the good parts of JavaScript in a simple way.
 
